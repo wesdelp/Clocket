@@ -87,14 +87,21 @@ public:
         for (int channel = 0; channel < chanCount; ++channel) {
         
             // Get pointer to immutable input buffer and mutable output buffer
-            const float* in = (float*)inBufferListPtr->mBuffers[channel].mData;
-            float* out = (float*)outBufferListPtr->mBuffers[channel].mData;
             
-            for (int frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
-                const int frameOffset = int(frameIndex + bufferOffset);
+            // If Left Channel, kill audio output
+            if (channel == 0) {
+                continue;
+            }
+            else {
+                const float* in = (float*)inBufferListPtr->mBuffers[channel].mData;
+                float* out = (float*)outBufferListPtr->mBuffers[channel].mData;
                 
-                // Do your sample by sample dsp here...
-                out[frameOffset] = in[frameOffset];
+                for (int frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
+                    const int frameOffset = int(frameIndex + bufferOffset);
+                    
+                    // Do your sample by sample dsp here...
+                    out[frameOffset] = in[frameOffset];
+                }
             }
         }
     }

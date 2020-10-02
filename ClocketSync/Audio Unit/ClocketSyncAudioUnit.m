@@ -20,7 +20,9 @@ const AudioUnitParameterID myParam1 = 0;
 @end
 
 
-@implementation ClocketSyncAudioUnit
+@implementation ClocketSyncAudioUnit {
+    AUHostMusicalContextBlock _musicalContext;
+}
 @synthesize parameterTree = _parameterTree;
 
 - (instancetype)initWithComponentDescription:(AudioComponentDescription)componentDescription options:(AudioComponentInstantiationOptions)options error:(NSError **)outError {
@@ -126,7 +128,9 @@ const AudioUnitParameterID myParam1 = 0;
 
 		return NO;
 	}
-
+    
+    if (self.musicalContextBlock) { _musicalContext = self.musicalContextBlock; } else _musicalContext = nil;
+    
 	[super allocateRenderResourcesAndReturnError:outError];
 	[_kernelAdapter allocateRenderResources];
 	return YES;
@@ -145,6 +149,16 @@ const AudioUnitParameterID myParam1 = 0;
 
 // Block which subclassers must provide to implement rendering.
 - (AUInternalRenderBlock)internalRenderBlock {
+    double currentTempo;
+    if ( _musicalContext ) { // only use this if the host supports it...
+        if (_musicalContext( &currentTempo, NULL, NULL, NULL, NULL, NULL ) ) {
+            NSLog(@"%.20f", currentTempo);
+        }
+    }
+    else {
+        NSLog(@"No Musical Context?");
+    }
+    
 	return _kernelAdapter.internalRenderBlock;
 }
 

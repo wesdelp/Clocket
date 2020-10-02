@@ -30,7 +30,7 @@
         // Create the input and output busses.
         _inputBus.init(format, 8);
         _outputBus = [[AUAudioUnitBus alloc] initWithFormat:format error:nil];
-        _outputBus.maximumChannelCount = 8;
+        _outputBus.maximumChannelCount = 2;
     }
     return self;
 }
